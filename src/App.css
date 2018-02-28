@@ -1,0 +1,105 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  font-family: "Georgia";
+  font-size: 100px;
+  height:15%;
+  color: black;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.Flex-container{
+  height: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  background-image: url("sunrise_img.jpeg");
+  background-position: center;
+  background-size: 85%;
+  background-repeat: no-repeat;
+}
+
+.Main-flex {
+  margin-top: 50px;
+  display: flex;
+  height: 400px;
+  width: 400px;
+  align-items: center;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px 0px 0px 8px;
+  
+}
+
+.Side-flex {
+  margin-top: 50px;
+  display: flex;
+  height: 400px;
+  width: 175px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: white;
+  border-radius: 0px 8px 8px 0px;
+
+
+}
+
+h1 {
+  font-size: 100px;
+  color: white;
+  margin: auto;
+}
+
+#content{
+  margin: auto auto;
+}
+
+#morning_routine_btn {
+  width: 150px;
+  height: 75px;
+  /*background: linear-gradient(#00BFFF, #FFD700);*/
+  border: 0px;
+  color: black;
+  font-family: "Georgia";
+  font-size: 20px;
+  font-weight: 10px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+#night_routine_btn {
+  width: 150px;
+  height: 75px;
+  /*background: linear-gradient(#191970, #FFA500) ;*/
+  border: 0px;
+  color: black;
+  font-family: "Georgia";
+  font-size: 20px;
+  font-weight: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+
