@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import DayBackground from './sunrise_img.jpeg';
+import NightBackground from './nighttime_img.JPG';
+
 
 
 // The Component Hierarchy (enumerated by nesting level)
@@ -24,10 +27,6 @@ import './App.css';
 //   --> make a smiley sun/moon appear beside the text
 
 
- 
-
-
-// TODO create the main container??
 
 
 // the Button component can only ever live within the app component
@@ -38,7 +37,7 @@ function Button(props) {
       // className will be affected by CSS to make the buttons look different 
       // props.onClick should reference a function that changes state of the holder component
 
-      <button id={props.id} className = {props.className}>
+      <button id={props.id} className = {props.className} onClick={props.onClick}>
         {props.value}
       </button>
     );
@@ -53,11 +52,13 @@ function Checkbox(props){
 // TODO create the habit list class x
 // HabitList has props name, className, and value
 // HabitList contains the array of habits
+// if goodMorning is true, then the Habitlist shown will be the morning one, else it will be the night one
 class HabitList extends Component{
   constructor(props){
     super(props);
     this.state = {
       listOfHabits: Array(0),
+      goodMorning: props.isItMorning
     }
   }
   render(){
@@ -104,24 +105,56 @@ class Habit extends Component{
 
 
 class App extends Component {
+
+  
+
   constructor(props){
     super(props);
     this.state = {
-      // initial state: no habits displayed, only 2 big buttons saying 
-      // "my morning habit" and "my night habit"
+      // initial state: morning is displayed, background and list reflect this
+      goodMorning: true,
       
     };
   }
+
+  modeClick(){
+    this.setState({
+      goodMorning: !this.state.goodMorning,
+    });
+    
+  }
+
   render() {
+    var backgroundImageURL;
+
+    if(this.state.goodMorning === true)
+      backgroundImageURL = DayBackground;   
+    else
+      backgroundImageURL = NightBackground; 
+
+// inline style to support changing backgrounds
+    const background = {
+      height: '800px',
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      justifyContent: 'center',
+      backgroundPosition: 'center',
+      backgroundSize: '85%',
+      backgroundRepeat: 'no-repeat',
+      backgroundImage: 'url(' + backgroundImageURL + ')',
+    };
+
     return (
       <div className="App">
         <header className="App-header">Habritual</header>
-        <div className='Flex-container'>
-          <HabitList name='morning_habits' className='Main-flex'/>
+        <div style={background} className='Flex-container'>
+          <HabitList name='morning_habits' className='Main-flex' isItMorning={this.state.goodMorning}/>
 
           <div className='Side-flex'>
-            <Button id='morning_routine_btn' className='mainMenuButton' value= 'Good Morning' />
-            <Button id='night_routine_btn' className='mainMenuButton' value= 'Good Night' />
+            <Button id='morning_routine_btn' className='mainMenuButton' value= 'Good Morning' onClick={()=>this.modeClick()}/>
+            <Button id='night_routine_btn' className='mainMenuButton' value= 'Good Night' onClick={()=>this.modeClick()} />
           </div>
         </div>
       </div>
