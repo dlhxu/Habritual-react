@@ -27,6 +27,15 @@
   to { transform: rotate(360deg); }
 }
 
+.completedIcon{
+  width: 10px;
+}
+
+.List-header {
+  font-family: "Georgia";
+  font-size: 25px;
+}
+
 .Flex-container{
   height: 800px;
   width: 100%;
@@ -34,7 +43,6 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
-  background-image: url("sunrise_img.jpeg");
   background-position: center;
   background-size: 85%;
   background-repeat: no-repeat;
