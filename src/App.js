@@ -25,7 +25,10 @@ import NightComplete from './night_complete.svg';
 // 4. create a form fillout that will be used to create a new habit x
 // 5. style the form fillout
 // 6. style the add task button
-// 7. change the 2 buttons to just a single toggle that says: "it is night" or "it is morning"
+// 7. style the habit list header
+// 8. deleteHabit callback function
+// 9. change the 2 buttons to just a single toggle that says: "it is night" or "it is morning"
+
 
 // interactive react todos
 // make the onchange for the checkbox (ie completing a task!)
@@ -74,10 +77,10 @@ class Habit extends Component{
     var source;
 
     if(this.props.morningHabit === true) {
-      source = DayComplete;
+      this.source = DayComplete;
     }
     else {
-      source = NightComplete;
+      this.source = NightComplete;
     }
 
     return(
@@ -86,7 +89,7 @@ class Habit extends Component{
         <Button className = 'EditButton'/>
         <Button className = 'DeleteButton'/>
         <input id="done!" type="checkbox" onClick={this.completeClick}/>
-        {this.state.taskCompleted? <img className="completedIcon" src={source} /> : null}
+        {this.state.taskCompleted? <img className="completedIcon" src={this.source} /> : null}
       </li>
     );
   }
@@ -113,11 +116,11 @@ class HabitForm extends Component{
   }
 
   morningChange(event) {
-    this.setState({morning: !this.state.morning});
+    this.setState({morning: !this.state.morning,});
   }
 
   nightChange(event) {
-    this.setState({night: !this.state.night});
+    this.setState({night: !this.state.night,});
   }
 
   dataReturn() {
@@ -133,18 +136,17 @@ class HabitForm extends Component{
 
   render() {
     return (
-      <form className="habitForm" onSubmit={()=>this.props.handleSubmit()}>
-        <label>
-          New Habit
-          <label for="habitVal">Enter Habit name: </label>
-          <input id="habitVal" type="text" value={this.state.habitVal} onChange={this.textChange}/>
-          <input id="morningHabit" type="checkbox" checked={this.state.morning} onChange={this.morningChange}/>
-          <label for="morningHabit">Morning habit</label>
-          <input id="nightHabit" type="checkbox" checked={this.state.night} onChange={this.nightChange}/>
-          <label for="nightHabit">Night habit</label>
-          <input type="submit" value="Submit" />
-        </label>
-      </form>
+      <div align="center">
+        <form className="habitForm" onSubmit={()=>this.props.handleSubmit()}>
+            <label for="habitVal">Enter Habit name: </label>
+            <input id="habitVal" type="text" value={this.state.habitVal} onChange={this.textChange}/>
+            <input id="morningHabit" type="checkbox" checked={this.state.morning} onChange={this.morningChange}/>
+            <label for="morningHabit">Morning habit</label>
+            <input id="nightHabit" type="checkbox" checked={this.state.night} onChange={this.nightChange}/>
+            <label for="nightHabit">Night habit</label>
+            <input type="submit" value="Submit" />
+        </form>
+      </div>
     ); 
   }
 }
@@ -159,76 +161,20 @@ class HabitList extends Component{
   constructor(props){
     super(props);
     this.state = {
-      morningHabits: Array(0),
-      nightHabits: Array(0),
       goodMorning: this.props.isItMorning,
       showForm: false
     }
   }
 
-  completeClick(i) {
-
-    // should alter the habit associated with the array index to reflect that the task has been completed
-
-  }
-
-  deleteClick(i) {
-
-    // state change should be called here, removes a specific array index
-
-    // renderHabits will be called in the render() function, so the change will be reflected immediately
-
-  }
-
-  handleSubmit(formData) {
-
-    this.setState({
-      // this causes form to be hidden
-      showForm: !this.state.showForm
-    });
-
-    var habitVal = formData.habitVal;
-      if(formData.morning === true) {
-        this.state.morningHabits.push(<Habit value={this.habitVal}/>);
-      }
-      
-      if(formData.night === true) {
-        this.state.nightHabits.push(<Habit value={this.habitVal}/>);
-      }
-
-
-
-  }
-
-  addTaskClick(){
-
-    // this causes a form to be shown
-    this.setState({
-      showForm: !this.state.showForm
-    });
-   
-  }
-
   render(){
-
-    var renderHabits;
-
-    if(this.goodMorning === true) {
-      // call renderHabits(morningHabits)
-      renderHabits = this.morningHabits;
-
-    }
-    else 
-      // call renderHabits(nightHabits)
-    renderHabits = this.nightHabits;
 
     return (
       
       <div name={this.props.name} className={this.props.className}>
-        {this.state.showForm? <HabitForm className='newHabitForm' onSubmit={this.handleSubmit.bind(this)}/> : null} 
-        <header className = "List-header">To do's:  </header>
+        
+        <header className ="List-header">To do's:  </header>
         <ul>
-          {renderHabits}
+          {this.props.renderHabits}
         </ul>
       </div>
     );
@@ -243,8 +189,11 @@ class App extends Component {
     super(props);
     this.state = {
       // initial state: morning is displayed, background and list reflect this
+      // morning and night habits are initialized as empty arrays which will have Habits pushed into them
       goodMorning: true,
-      
+      showForm: false,
+      morningHabits: Array(0),
+      nightHabits: Array(0),
     };
   }
 
@@ -257,13 +206,52 @@ class App extends Component {
     
   }
 
+  addTaskClick(){
+    // this causes a form to be shown
+    this.setState({
+      showForm: !this.state.showForm
+    });
+   
+  }
+
+  deleteClick(i) {
+
+    // state change will have to be implmented via callback function
+
+  }
+
+
+  handleSubmit(formData) {
+
+    this.setState({
+      // this causes form to be hidden
+      showForm: !this.state.showForm
+    });
+
+    var habitVal = formData.habitVal;
+      if(formData.morning === true) {
+        this.state.morningHabits.push(<Habit value={this.habitVal} morningHabit={true}/>);
+      }
+      
+      if(formData.night === true) {
+        this.state.nightHabits.push(<Habit value={this.habitVal} morningHabit={false}/>);
+      }
+
+  }
+
+
   render() {
     var backgroundImageURL;
+    var renderHabits;
 
-    if(this.state.goodMorning === true)
+    if(this.state.goodMorning === true) {
       backgroundImageURL = DayBackground;   
-    else
+      renderHabits = this.state.morningHabits;
+    }
+    else {
       backgroundImageURL = NightBackground; 
+      renderHabits = this.state.nightHabits;
+    }
 
   // inline style to support changing backgrounds
     const background = {
@@ -284,12 +272,14 @@ class App extends Component {
         <header className="App-header">Habritual</header>
         <div style={background} className='Flex-container'>
           
-          <HabitList name='morning_habits' className='Main-flex' isItMorning={this.state.goodMorning}/>
+          <HabitList name='morning_habits' className='Main-flex' isItMorning={this.state.goodMorning} habits={this.renderHabits}/>
           <div className='Side-flex'>
             <Button id='morning_routine_btn' className='mainMenuButton' value= 'Good Morning' onClick={()=>this.modeClick()}/>
             <Button id='night_routine_btn' className='mainMenuButton' value= 'Good Night' onClick={()=>this.modeClick()} />
-          </div>
+            <Button id='new_task_btn' className='mainMenuButton' value='Add a task' onClick={()=>this.addTaskClick()}/>
+          </div> 
         </div>
+         {this.state.showForm? <HabitForm className='newHabitForm' onSubmit={this.handleSubmit.bind(this)}/> : null}
         <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 
       </div>
