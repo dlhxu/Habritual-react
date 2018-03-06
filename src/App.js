@@ -23,16 +23,17 @@ import NightComplete from './night_complete.svg';
 // 3. change the design of the site to instead work off of toggles: initial landing page will be the morning todos x 
 //   3: handled via implementing states which will need to be polished
 // 4. create a form fillout that will be used to create a new habit x
-// 5. style the form fillout
-// 6. style the add task button
-// 7. style the habit list header
+// 5. style the form fillout x
+// 6. style the add task button x
+// 7. style the habit list header x
+// 8. change the array of Habit to array of objects that will be mapped to Habits
 // 8. deleteHabit callback function
 // 9. change the 2 buttons to just a single toggle that says: "it is night" or "it is morning"
 
 
 // interactive react todos
 // make the onchange for the checkbox (ie completing a task!)
-//   --> make a smiley sun/moon appear beside the text
+//   --> make a smiley sun/moon appear beside the text x
 
 
 
@@ -66,6 +67,8 @@ class Habit extends Component{
     this.state= {
       taskCompleted: false,
       };
+
+    this.completeClick = this.completeClick.bind(this);
     }
 
   completeClick() {
@@ -74,7 +77,7 @@ class Habit extends Component{
   
   render(){
 
-    var source;
+    let source;
 
     if(this.props.morningHabit === true) {
       this.source = DayComplete;
@@ -84,12 +87,12 @@ class Habit extends Component{
     }
 
     return(
-      <li className="Habit">
+      <li className="Habit" key={this.props.id}>
         {this.props.value}
         <Button className = 'EditButton'/>
         <Button className = 'DeleteButton'/>
         <input id="done!" type="checkbox" onClick={this.completeClick}/>
-        {this.state.taskCompleted? <img className="completedIcon" src={this.source} /> : null}
+        {this.state.taskCompleted? <img className="completedIcon" src={this.source} alt="good job!"/> : null}
       </li>
     );
   }
@@ -108,6 +111,10 @@ class HabitForm extends Component{
       night: false
     }
 
+    this.dataReturn = this.dataReturn.bind(this);
+    this.textChange = this.textChange.bind(this);
+    this.morningChange = this.morningChange.bind(this);
+    this.nightChange = this.nightChange.bind(this);
     this.dataReturn = this.dataReturn.bind(this);
   }
 
@@ -158,23 +165,15 @@ class HabitForm extends Component{
 // the habits that are created will have delete and complete buttons, onclick of these should be passed in as props from habitList
 
 class HabitList extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      goodMorning: this.props.isItMorning,
-      showForm: false
-    }
-  }
-
   render(){
 
+    var habits = this.props.habits.map(habit => (<Habit value={habit.habitVal} morningHabit={habit.morningHabit} id={habit.id}/>));
+    console.log(habits);
     return (
-      
       <div name={this.props.name} className={this.props.className}>
-        
         <header className ="List-header">To do's:  </header>
         <ul>
-          {this.props.renderHabits}
+          {habits}
         </ul>
       </div>
     );
@@ -192,9 +191,12 @@ class App extends Component {
       // morning and night habits are initialized as empty arrays which will have Habits pushed into them
       goodMorning: true,
       showForm: false,
-      morningHabits: Array(0),
-      nightHabits: Array(0),
+      morningHabits: [{habitVal: "good morning", morningHabit: true, id: "good_morning"}],
+      nightHabits: [],
+      numHabits: 0,
     };
+
+//    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   modeClick(){
@@ -220,22 +222,34 @@ class App extends Component {
 
   }
 
-
   handleSubmit(formData) {
+
+      var newNum = this.state.numHabits;
+      var updatedArr; 
+
+      if(formData.morning === true) {
+        this.newNum++;
+        this.updatedArr= this.state.morningHabits.slice();
+        this.updatedArr.push({habitVal: formData.habitVal, morningHabit: formData.morning, id: this.state.numHabits});
+        this.setState({morningHabits: this.updatedArr, numHabits: this.newNum});
+
+      }
+ 
+      if(formData.night === true) {
+        this.newNum++;
+        this.updatedArr = this.state.nightHabits.slice();
+        this.updatedArr.push({habitVal: formData.habitVal, morningHabit: false, id: this.state.numHabits});
+        this.setState({nightHabits: this.updatedArr, numHabits: this.newNum});
+      }
 
     this.setState({
       // this causes form to be hidden
       showForm: !this.state.showForm
     });
 
-    var habitVal = formData.habitVal;
-      if(formData.morning === true) {
-        this.state.morningHabits.push(<Habit value={this.habitVal} morningHabit={true}/>);
-      }
-      
-      if(formData.night === true) {
-        this.state.nightHabits.push(<Habit value={this.habitVal} morningHabit={false}/>);
-      }
+    console.log(this.state.morningHabits);
+
+    
 
   }
 
@@ -272,7 +286,8 @@ class App extends Component {
         <header className="App-header">Habritual</header>
         <div style={background} className='Flex-container'>
           
-          <HabitList name='morning_habits' className='Main-flex' isItMorning={this.state.goodMorning} habits={this.renderHabits}/>
+          <HabitList name='habitList' className='Main-flex' habits={renderHabits}/>
+          
           <div className='Side-flex'>
             <Button id='morning_routine_btn' className='mainMenuButton' value= 'Good Morning' onClick={()=>this.modeClick()}/>
             <Button id='night_routine_btn' className='mainMenuButton' value= 'Good Night' onClick={()=>this.modeClick()} />
