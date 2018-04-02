@@ -116,6 +116,7 @@ class HabitForm extends Component{
     this.morningChange = this.morningChange.bind(this);
     this.nightChange = this.nightChange.bind(this);
     this.dataReturn = this.dataReturn.bind(this);
+    this.formSubmit = this.formSubmit.bind(this);
   }
 
   textChange(event) {
@@ -130,7 +131,12 @@ class HabitForm extends Component{
     this.setState({night: !this.state.night,});
   }
 
-  dataReturn() {
+  formSubmit(event) {
+    event.preventDefault();
+    this.dataReturn();
+  }
+
+  dataReturn = () => {
     var habitInfo = {
       habitVal: this.state.habitVal,
       morning: this.state.morning,
@@ -138,21 +144,22 @@ class HabitForm extends Component{
     }
 
     this.props.handleSubmit(habitInfo);
+    
   }
 
 
   render() {
     return (
       <div align="center">
-        <form className="habitForm" onSubmit={()=>this.props.handleSubmit()}>
-            <label for="habitVal">Enter Habit name: </label>
-            <input id="habitVal" type="text" value={this.state.habitVal} onChange={this.textChange}/>
-            <input id="morningHabit" type="checkbox" checked={this.state.morning} onChange={this.morningChange}/>
-            <label for="morningHabit">Morning habit</label>
-            <input id="nightHabit" type="checkbox" checked={this.state.night} onChange={this.nightChange}/>
-            <label for="nightHabit">Night habit</label>
-            <input type="submit" value="Submit" />
-        </form>
+        <label for="habitVal">Enter Habit name: </label>
+        <input id="habitVal" type="text" value={this.state.habitVal} onChange={this.textChange}/>
+        <input id="morningHabit" type="checkbox" checked={this.state.morning} onChange={this.morningChange}/>
+        <label for="morningHabit">Morning habit</label>
+        <input id="nightHabit" type="checkbox" checked={this.state.night} onChange={this.nightChange}/>
+        <label for="nightHabit">Night habit</label>
+        <button onClick={this.dataReturn}> 
+          Submit!
+        </button>
       </div>
     ); 
   }
@@ -166,14 +173,11 @@ class HabitForm extends Component{
 
 class HabitList extends Component{
   render(){
-
-    var habits = this.props.habits.map(habit => (<Habit value={habit.habitVal} morningHabit={habit.morningHabit} id={habit.id}/>));
-    console.log(habits);
     return (
       <div name={this.props.name} className={this.props.className}>
         <header className ="List-header">To do's:  </header>
         <ul>
-          {habits}
+          {this.props.habits}
         </ul>
       </div>
     );
@@ -191,7 +195,7 @@ class App extends Component {
       // morning and night habits are initialized as empty arrays which will have Habits pushed into them
       goodMorning: true,
       showForm: false,
-      morningHabits: [{habitVal: "good morning", morningHabit: true, id: "good_morning"}],
+      morningHabits: [],
       nightHabits: [],
       numHabits: 0,
     };
@@ -222,34 +226,34 @@ class App extends Component {
 
   }
 
-  handleSubmit(formData) {
+  handleSubmit = (formData) =>  {
+      this.setState ({showForm: !this.state.showForm, });
 
       var newNum = this.state.numHabits;
       var updatedArr; 
 
       if(formData.morning === true) {
-        this.newNum++;
-        this.updatedArr= this.state.morningHabits.slice();
-        this.updatedArr.push({habitVal: formData.habitVal, morningHabit: formData.morning, id: this.state.numHabits});
-        this.setState({morningHabits: this.updatedArr, numHabits: this.newNum});
+        newNum++;
+        updatedArr= this.state.morningHabits.slice();
+        updatedArr.push(<Habit value = {formData.habitVal} morningHabit = {true} id = {this.state.numHabits} />);
+        this.setState(
+          {
+            morningHabits: updatedArr, 
+            numHabits: newNum
+          });
 
       }
  
       if(formData.night === true) {
-        this.newNum++;
-        this.updatedArr = this.state.nightHabits.slice();
-        this.updatedArr.push({habitVal: formData.habitVal, morningHabit: false, id: this.state.numHabits});
-        this.setState({nightHabits: this.updatedArr, numHabits: this.newNum});
+        newNum++;
+        updatedArr = this.state.nightHabits.slice();
+        updatedArr.push(<Habit value= {formData.habitVal} morningHabit = {false} id = {this.state.numHabits} />);
+        this.setState(
+          {
+            nightHabits: updatedArr, 
+            numHabits: this.newNum
+          });
       }
-
-    this.setState({
-      // this causes form to be hidden
-      showForm: !this.state.showForm
-    });
-
-    console.log(this.state.morningHabits);
-
-    
 
   }
 
@@ -284,6 +288,7 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">Habritual</header>
+        {this.state.showForm? <HabitForm className='newHabitForm' handleSubmit={this.handleSubmit}/> : null}
         <div style={background} className='Flex-container'>
           
           <HabitList name='habitList' className='Main-flex' habits={renderHabits}/>
@@ -294,7 +299,7 @@ class App extends Component {
             <Button id='new_task_btn' className='mainMenuButton' value='Add a task' onClick={()=>this.addTaskClick()}/>
           </div> 
         </div>
-         {this.state.showForm? <HabitForm className='newHabitForm' onSubmit={this.handleSubmit.bind(this)}/> : null}
+         
         <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 
       </div>
