@@ -175,7 +175,7 @@ class HabitList extends Component{
   render(){
     return (
       <div name={this.props.name} className={this.props.className}>
-        <header className ="List-header">To do's:  </header>
+        <header className ="List-header">Tasks:  </header>
         <ul>
           {this.props.habits}
         </ul>
